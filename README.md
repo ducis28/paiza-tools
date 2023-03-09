@@ -15,7 +15,22 @@
 
 Paiza アカウントと Google アカウントを連携する必要はない。メールアドレスも無関係のものでよい。
 
-## 使い方
+## 使い方（シンプル版）
+
+1. 以下の URL をクリックして「paiza進捗状況を集計するためのツール」を開く。
+   - https://ducis28.github.io/paiza-tools/paiza.html
+2. 4行目くらいにある「評価結果一覧」をクリックして paiza の評価結果一覧を開く。自動的に別のタブやウィンドウで開かれるはずである。
+   - まだ paiza にログインしていない場合はログインする
+3. 評価結果一覧のページ全体を選択し（Ctrl + A），コピーする（Ctrl + C）。
+   - Mac の場合は Ctrl でなく command キー
+   - https://support.apple.com/ja-jp/HT201236
+4. 「paiza進捗状況を集計するためのツール」の赤枠内をクリックしてから貼り付けする（Ctrl + V）。
+5. 貼り付けると，出力にテーブルが自動生成される。
+6. 研究室の所定フォーマットに近い出力が得られる。報告の際に活用するとよい。
+   - 「出力」のすぐ下に「Copy to Clipboard」でテーブル全体をコピーできる。
+   - テーブル全体をコピーした状態で Excel 等のスプレッドシートに貼り付けるとよい。
+
+## 使い方（Colab を利用する場合）
 
 1. 以下のバッジ（Open in Colab）をクリックする。
    - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://colab.research.google.com/github/ducis28/paiza-tools/blob/main/paiza.ipynb)
