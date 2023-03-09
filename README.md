@@ -2,7 +2,8 @@
 
 - 研究室の paiza 課題をある程度進めたが，結果をまとめるのが億劫な人向けのツール。
 - 概要
-  - paiza の評価結果一覧ページ（paiza 転職，paiza 新卒，などいくつかバリエーションがあるが内容はほぼ同じ）の HTML 文書を [selenium](https://www.selenium.dev/) で取得し，取得した HTML 文書を [Beautiful Soup 4](https://www.crummy.com/software/BeautifulSoup/) で解析・整形する。最終的に Microsoft Excel 形式のファイルで出力する。
+  - 《シンプル版》paiza の評価結果一覧ページを手動でコピーしたものを貼り付けると，結果を HTML のテーブル（table 要素）として生成する。生成されたテーブルはコピペによって Microsoft Excel に貼り付けることができる。
+  - 《Colab 版》paiza の評価結果一覧ページ（paiza 転職，paiza 新卒，などいくつかバリエーションがあるが内容はほぼ同じ）の HTML 文書を [selenium](https://www.selenium.dev/) で取得し，取得した HTML 文書を [Beautiful Soup 4](https://www.crummy.com/software/BeautifulSoup/) で解析・整形する。最終的に Microsoft Excel 形式のファイルで出力する。
 - Acknowledgements
   - [paiza](https://paiza.jp/) は paiza 株式会社（旧社名:ギノ株式会社）が運営するプログラミング学習のための Web サービスです。
   - [Google Colab](https://colab.research.google.com/notebooks/welcome.ipynb) （正式名称「Colaboratory」）は Google Research が提供する Web サービスです。詳しくは [Google Colab FAQ](https://research.google.com/colaboratory/faq.html) を参照してください。
