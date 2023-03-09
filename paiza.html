@@ -1,0 +1,130 @@
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>paiza進捗状況を集計するためのツール</title>
+<style>
+#paste {
+    width: 80%;
+    height: 300px;
+    border: 1px solid #ff0000;
+    background-color: #ff9999;
+}
+table {
+    border: 1px solid #000;
+    border-collapse: collapse;
+}
+tr, th, td {
+    border: 1px solid #000;
+}
+</style>
+</head>
+<body>
+<h1>paiza進捗状況を集計するためのツール</h1>
+<h2>使い方</h2>
+<p>以下の手順にしたがって操作してください。</p>
+<ol>
+    <li>paiza の「<a href="https://paiza.jp/career/mypage/results" target="_blank" rel="noopener noreferrer">評価結果一覧</a>」ページを開いてください。ログインが必要です。</li>
+    <li>評価結果一覧ページの全体を選択（Ctrl + a）して，内容をクリップボードにコピー（Ctrl + C）してください。</li>
+    <li>この画面に戻り，下の赤枠内をクリックし，さきほどコピーした内容を貼り付け（Ctrl + V）してください。</li>
+</ol>
+<h2>入力</h2>
+<textarea id="paste" placeholder="click here and paste (Ctrl + V or Command + V)"></textarea>
+<h2>出力</h2>
+<button id="copy">Copy to Clipboard</button>
+<table id="output">
+    <thead></thead>
+    <tbody></tbody>
+</table>
+<script>
+function format_time(m, s) {
+    m = Number(m);
+    s = Number(s);
+    const h = Math.floor(m / 60);
+    m = m % 60;
+    if (h >= 24) {
+        return '23:59:59';
+    }
+    return `${h}:${m}:${s}`;
+}
+
+document.querySelector('#paste').addEventListener('input', () => {
+    const text = document.querySelector('#paste').value;
+    const regexp = /paizaランク([ABCDS]) .*\n受験結果.*\n問題集計.*/g;
+    const matches = text.matchAll(regexp);
+
+    const results = [];
+    for (const m of matches) {
+        const lines = m[0].split('\n');
+        if (lines.length != 3) {
+            console.log(`INVALID INPUT: ${m[0]}`);
+        } else {
+            const x1 = lines[0].match(/paizaランク[ABCDS] (【.+】)?([ABCDS][0-9]+):(.*)( [ABCDS])?提出日：(.+)/);
+            const x2 = lines[1].match(/受験結果 受験言語： (.+) 解答時間： (.+)分(.+)秒 獲得ランク： .ランク スコア： (.+)点詳しく採点結果を見る/);
+            //const x3 = lines[2].match(/問題集計 難易度： (.+) 受験者数： (.+)人 正解率： (.+)％ 解答時間中央値： "(.+)" 平均スコア： (.+)点 score (.+)再チャレンジする/);
+            console.log(x1);
+            const problem_code = x1[2];
+            const problem_title = (x1[1] || '') + x1[3];
+            const submitted_at = x1[5];
+            const lang = x2[1];
+            const solution_time = format_time(x2[2], x2[3]);
+            const solution_score = x2[4];
+            const result = {
+                Date: submitted_at,
+                Name: '',
+                Problem: problem_code,
+                Title: problem_title,
+                Lang: lang,
+                Time: solution_time,
+                Bytes: '',
+                Score: solution_score,
+                Comment: '',
+            };
+            results.push(result);
+        }
+    }
+
+    const keys = ['Date', 'Name', 'Problem', 'Title', 'Lang', 'Time', 'Bytes', 'Score', 'Comment'];
+    const table = document.querySelector('#output');
+
+    // Clear
+    table.innerHTML = '<thead></thead><tbody></tbody>';
+
+    // Table header
+    const tr = document.createElement('tr');
+    for (const key of keys) {
+        const th = document.createElement('th');
+        th.textContent = key;
+        tr.appendChild(th);
+    }
+    document.querySelector('#output thead').appendChild(tr);
+
+    // Table body
+    const tbody = document.querySelector('#output tbody');
+    results.forEach((result) => {
+        const tr = document.createElement('tr');
+        tbody.appendChild(tr);
+        for (const key of keys) {
+            const td = document.createElement('td');
+            td.textContent = result[key];
+            tr.appendChild(td);
+        }
+    });
+});
+
+document.querySelector('#copy').addEventListener('click', () => {
+    const tbody = document.querySelector('#output');
+
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+
+    const range = document.createRange();
+    range.selectNodeContents(tbody);
+    selection.addRange(range);
+
+    document.execCommand('copy');
+
+    //navigator.clipboard.read();
+});
+</script>
+</body>
+</html>
