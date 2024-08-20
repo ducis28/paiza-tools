@@ -1,7 +1,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<title>paiza進捗状況を集計するためのツール</title>
+<title>paiza進捗状況を集計するためのツール（再チャレンジ版）</title>
 <style>
 #paste {
     width: 80%;
@@ -23,8 +23,8 @@ tr, th, td {
 <h2>使い方</h2>
 <p>以下の手順にしたがって操作してください。</p>
 <ol>
-    <li>paiza の「<a href="https://paiza.jp/student/mypage/results" target="_blank" rel="noopener noreferrer">評価結果一覧</a>」ページを開いてください。ログインが必要です。</li>
-    <li>評価結果一覧ページの全体を選択（Ctrl + a）して，内容をクリップボードにコピー（Ctrl + C）してください。</li>
+    <li>paiza の「<a href="https://paiza.jp/student/mypage/retry-results" target="_blank" rel="noopener noreferrer">再チャレンジ結果一覧</a>」ページを開いてください。ログインが必要です。</li>
+    <li>評価結果一覧ページの全体を選択（Ctrl + A）して，内容をクリップボードにコピー（Ctrl + C）してください。</li>
     <li>この画面に戻り，下の赤枠内をクリックし，さきほどコピーした内容を貼り付け（Ctrl + V）してください。</li>
 </ol>
 <h2>入力</h2>
@@ -49,32 +49,30 @@ function format_time(m, s) {
 
 document.querySelector('#paste').addEventListener('input', () => {
     const text = document.querySelector('#paste').value;
-    const regexp = /paizaランク([ABCDS]) .*\n受験結果.*\n問題集計.*/g;
+    const regexp = /paizaランク([ABCDS]) .*\n受験言語.*/g;
     const matches = text.matchAll(regexp);
 
     const results = [];
     for (const m of matches) {
         const lines = m[0].split('\n');
-        if (lines.length != 3) {
+        if (lines.length != 2) {
             console.log(`INVALID INPUT: ${m[0]}`);
         } else {
             const x1 = lines[0].match(/paizaランク[ABCDS] (【.+】)?([ABCDS][0-9]+):(.*)( [ABCDS])?提出日：(.+)/);
-            const x2 = lines[1].match(/受験結果 受験言語： (.+) 解答時間： (.+)分(.+)秒 獲得ランク： .ランク スコア： (.+)点詳しく採点結果を見る/);
-            //const x3 = lines[2].match(/問題集計 難易度： (.+) 受験者数： (.+)人 正解率： (.+)％ 解答時間中央値： "(.+)" 平均スコア： (.+)点 score (.+)再チャレンジする/);
+            const x2 = lines[1].match(/受験言語： (.+) 獲得ランク： .ランク スコア： (.+)点結果を見る/);
             console.log(x1);
             const problem_code = x1[2];
             const problem_title = (x1[1] || '') + x1[3];
             const submitted_at = x1[5];
             const lang = x2[1];
-            const solution_time = format_time(x2[2], x2[3]);
-            const solution_score = x2[4];
+            const solution_score = x2[2];
             const result = {
                 Date: submitted_at,
                 Name: '',
                 Problem: problem_code,
                 Title: problem_title,
                 Lang: lang,
-                Time: solution_time,
+                Time: '',
                 Bytes: '',
                 Score: solution_score,
                 Comment: '',
