@@ -49,38 +49,38 @@ function format_time(m, s) {
 
 document.querySelector('#paste').addEventListener('input', () => {
     const text = document.querySelector('#paste').value;
-    const regexp = /paizaランク([ABCDS]) .*\n受験結果.*\n問題集計.*/g;
+    const regexp = /(paizaランク([ABCDS]) .*?)(受験結果.*?)(問題集計.*?再チャレンジする)/gs;
     const matches = text.matchAll(regexp);
 
     const results = [];
+
     for (const m of matches) {
-        const lines = m[0].split('\n');
-        if (lines.length != 3) {
-            console.log(`INVALID INPUT: ${m[0]}`);
-        } else {
-            const x1 = lines[0].match(/paizaランク[ABCDS] (【.+】)?([ABCDS][0-9]+):(.*)( [ABCDS])?提出日：(.+)/);
-            const x2 = lines[1].match(/受験結果 受験言語： (.+) 解答時間： (.+)分(.+)秒 獲得ランク： .ランク スコア： (.+)点詳しく採点結果を見る/);
-            //const x3 = lines[2].match(/問題集計 難易度： (.+) 受験者数： (.+)人 正解率： (.+)％ 解答時間中央値： "(.+)" 平均スコア： (.+)点 score (.+)再チャレンジする/);
-            console.log(x1);
-            const problem_code = x1[2];
-            const problem_title = (x1[1] || '') + x1[3];
-            const submitted_at = x1[5];
-            const lang = x2[1];
-            const solution_time = format_time(x2[2], x2[3]);
-            const solution_score = x2[4];
-            const result = {
-                Date: submitted_at,
-                Name: '',
-                Problem: problem_code,
-                Title: problem_title,
-                Lang: lang,
-                Time: solution_time,
-                Bytes: '',
-                Score: solution_score,
-                Comment: '',
-            };
-            results.push(result);
-        }
+        const line0 = m[1];
+        const line1 = m[3];
+        const line2 = m[4];
+
+        const x1 = line0.match(/paizaランク[ABCDS] (【.+】)?([ABCDS][0-9]+):(.*)( [ABCDS])?提出日：(.+)/s);
+        const x2 = line1.match(/受験結果 受験言語： (.+) 解答時間： (.+)分(.+)秒 獲得ランク： .ランク スコア： (.+)点\s*詳しく採点結果を見る/s);
+        //const x3 = line2.match(/問題集計 難易度： (.+) 受験者数： (.+)人 正解率： (.+)％ 解答時間中央値： "(.+)" 平均スコア： (.+)点 score (\S+)\s*再チャレンジする/s);
+
+        const problem_code = x1[2];
+        const problem_title = ((x1[1] || '') + x1[3]).replace(/ [SABCD]$/, '');
+        const submitted_at = x1[5];
+        const lang = x2[1];
+        const solution_time = format_time(x2[2], x2[3]);
+        const solution_score = x2[4];
+        const result = {
+            Date: submitted_at,
+            Name: '',
+            Problem: problem_code,
+            Title: problem_title,
+            Lang: lang,
+            Time: solution_time,
+            Bytes: '',
+            Score: solution_score,
+            Comment: '',
+        };
+        results.push(result);
     }
 
     const keys = ['Date', 'Name', 'Problem', 'Title', 'Lang', 'Time', 'Bytes', 'Score', 'Comment'];
